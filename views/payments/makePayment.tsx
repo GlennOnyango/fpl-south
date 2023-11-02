@@ -1,30 +1,39 @@
-import { StyleSheet, Text, View } from "react-native";
-import { Button, Card, TextInput, useTheme } from "react-native-paper";
-import { useState } from "react";
+import { StyleSheet, View } from "react-native";
+import {
+  Button,
+  Card,
+  Text,
+  SegmentedButtons,
+  useTheme,
+} from "react-native-paper";
+import { useMemo, useState } from "react";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-type userCredntial = {
-  phoneNumber: string;
-  password: string;
+type Props = {
+  navigation: any;
 };
 
-type Props = {
-    navigation: any;
-    
-}
-
-export default function MakePayment({navigation}: Props) {
+export default function MakePayment({ navigation }: Props) {
   const theme = useTheme();
-  const [credentials, setCredentials] = useState<userCredntial>({
-    phoneNumber: "",
-    password: "",
-  });
+  const [value, setValue] = useState<string[]>([]);
+  const [weeks, setWeeks] = useState<string[]>([]);
 
-  const [showPassword, setShowPassword] = useState(true);
+  const amountToPay = useMemo(() => {
+    let total = 0;
+    if (value.includes("all")) {
+      return 310;
+    }
 
-  const updateCredentials = (e: { type: string; text: string }) => {
-    setCredentials({ ...credentials, [e.type]: e.text });
-  };
+    if (value.includes("month")) {
+      total += 100;
+    }
+
+    if (value.includes("week")) {
+      total += weeks.length * 70;
+    }
+
+    return total;
+  }, [value, weeks]);
 
   return (
     <View style={style.container}>
@@ -32,49 +41,83 @@ export default function MakePayment({navigation}: Props) {
         <Card.Content>
           <View style={{ alignItems: "center", justifyContent: "center" }}>
             <MaterialCommunityIcons
-              name="security-network"
+              name="billboard"
               size={102}
               color={theme.colors.secondary}
             />
           </View>
 
           <View style={style.containerGroup}>
-            <TextInput
-              style={style.input}
-              label="Phone number you made payment with"
-              mode="outlined"
-              onChangeText={(newText) =>
-                updateCredentials({ type: "phoneNumber", text: newText })
-              }
-              value={credentials.phoneNumber}
-              inputMode={"tel"}
-              keyboardType={"phone-pad"}
-              maxLength={12}
+            <Text variant="titleMedium" style={{ marginBottom: 6 }}>
+              Select bill to pay :
+            </Text>
+
+            <SegmentedButtons
+              multiSelect={true}
+              value={value}
+              onValueChange={(newValue) => {
+                //get last value
+                const lastValue = newValue[newValue.length - 1];
+
+                if (lastValue === "all") {
+                  setValue(["all"]);
+                  return;
+                } else {
+                  const index = newValue.indexOf("all");
+                  if (index > -1) {
+                    newValue.splice(index, 1);
+                  }
+                  setValue(newValue);
+                  return;
+                }
+              }}
+              buttons={[
+                {
+                  value: "all",
+                  label: "All",
+                  showSelectedCheck: true,
+                },
+                {
+                  value: "month",
+                  label: "Month",
+                  showSelectedCheck: true,
+                },
+                { value: "week", label: "Weekly", showSelectedCheck: true },
+              ]}
             />
           </View>
+
+          {value.includes("week") ? (
+            <View style={style.containerGroup}>
+              <Text variant="titleMedium" style={{ marginBottom: 4 }}>
+                Select Weeks to pay:
+              </Text>
+
+              <SegmentedButtons
+                multiSelect={true}
+                value={weeks}
+                density="small"
+                onValueChange={setWeeks}
+                buttons={[
+                  {
+                    value: "11",
+                    label: "11",
+                    showSelectedCheck: true,
+                  },
+                  { value: "12", label: "12", showSelectedCheck: true },
+                  { value: "13", label: "13", showSelectedCheck: true },
+                  { value: "14", label: "14", showSelectedCheck: true },
+                ]}
+              />
+            </View>
+          ) : null}
+
           <View style={style.containerGroup}>
-            <TextInput
-              style={style.input}
-              label="Mpesa Code"
-              mode="outlined"
-              onChangeText={(newText) =>
-                updateCredentials({ type: "mpesaCode", text: newText })
-              }
-              value={credentials.phoneNumber}
-              inputMode={"text"}
-            />
-          </View>
-          <View style={style.containerGroup}>
-            <TextInput
-              style={style.input}
-              label="Amount"
-              mode="outlined"
-              onChangeText={(newText) =>
-                updateCredentials({ type: "amount", text: newText })
-              }
-              value={credentials.phoneNumber}
-              inputMode={"text"}
-            />
+            <View style={{ paddingHorizontal: 4 }}>
+              <Text variant="titleMedium" style={{ marginTop: 8 }}>
+                Amount to pay : {amountToPay} ksh
+              </Text>
+            </View>
           </View>
 
           <View style={style.containerGroup}>
@@ -94,31 +137,12 @@ export default function MakePayment({navigation}: Props) {
                   mode="elevated"
                   buttonColor={theme.colors.secondary}
                   textColor={"white"}
-                  onPress={() => console.log("Pressed")}
-                  disabled={false}
-                  style={{
-                    borderRadius: 1,
-                  }}
-                >
-                  Register
-                </Button>
-              </View>
-
-              <View
-                style={{
-                  width: "48%",
-                }}
-              >
-                <Button
-                  mode="elevated"
-                  buttonColor={theme.colors.secondary}
-                  textColor={"white"}
                   onPress={() => navigation.navigate("Login")}
                   style={{
                     borderRadius: 1,
                   }}
                 >
-                  Login
+                  Pay
                 </Button>
               </View>
             </View>
@@ -144,7 +168,7 @@ const style = StyleSheet.create({
   input: {
     width: "100%",
     height: 50,
-    borderBlockColor:"#1a237e"
+    borderBlockColor: "#1a237e",
   },
   containerGroup: {
     marginVertical: 5,
