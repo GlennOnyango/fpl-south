@@ -11,6 +11,7 @@ import CustomNavigationBar from "./customNavigtionBar";
 import CreateAccount from './views/createAccount';
 import Login from './views/login';
 import Dashboard from './views/dashboard';
+import MakePayment from './views/payments/makePayment';
 
 const Stack = createStackNavigator();
 
@@ -45,6 +46,7 @@ export default function App() {
           <Stack.Screen name='CreateAccount' component={CreateAccount} />
           <Stack.Screen name='Login' component={Login} />
           <Stack.Screen name='Dashboard' component={Dashboard} />
+          <Stack.Screen name='MakePayment' component={MakePayment} />
         </Stack.Navigator>
       </NavigationContainer>
     </PaperProvider>

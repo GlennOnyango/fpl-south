@@ -37,7 +37,7 @@ export default function Dashboard({ navigation }: Props) {
         ></ImageBackground>
       </Card>
 
-      <View style={{ display: "flex", flexDirection: "row", marginTop: 4 }}>
+      <View style={style.cardHouse}>
         <Card
           elevation={1}
           style={{
@@ -47,7 +47,7 @@ export default function Dashboard({ navigation }: Props) {
             flex: 1,
           }}
         >
-          <Card.Content>
+          <Card.Content style={style.cardContent}>
             <Text
               style={{
                 textAlign: "center",
@@ -68,7 +68,7 @@ export default function Dashboard({ navigation }: Props) {
             flex: 1,
           }}
         >
-          <Card.Content>
+          <Card.Content style={style.cardContent}>
             <Text
               style={{
                 textAlign: "center",
@@ -83,7 +83,7 @@ export default function Dashboard({ navigation }: Props) {
         </Card>
       </View>
 
-      <View style={{ display: "flex", flexDirection: "row", marginTop: 4 }}>
+      <View style={style.cardHouse}>
         <Card
           elevation={1}
           style={{
@@ -92,8 +92,9 @@ export default function Dashboard({ navigation }: Props) {
             backgroundColor: "#fff",
             flex: 1,
           }}
+          onPress={() => navigation.navigate("MakePayment")}
         >
-          <Card.Content>
+          <Card.Content style={style.cardContent}>
             <Text
               style={{
                 textAlign: "center",
@@ -102,7 +103,7 @@ export default function Dashboard({ navigation }: Props) {
                 fontWeight: "bold",
               }}
             >
-              Make Payments
+              Make Payment
             </Text>
           </Card.Content>
         </Card>
@@ -114,7 +115,7 @@ export default function Dashboard({ navigation }: Props) {
             flex: 1,
           }}
         >
-          <Card.Content>
+          <Card.Content style={style.cardContent}>
             <Text
               style={{
                 textAlign: "center",
@@ -129,6 +130,99 @@ export default function Dashboard({ navigation }: Props) {
         </Card>
       </View>
 
+      <View style={style.cardHouse}>
+        <Card
+          elevation={1}
+          style={{
+            alignItems: "center",
+            borderRadius: 0,
+            backgroundColor: "#fff",
+            flex: 1,
+          }}
+        >
+          <Card.Content style={style.cardContent}>
+            <Text
+              style={{
+                textAlign: "center",
+                color: "#000",
+                fontSize: 16,
+                fontWeight: "bold",
+              }}
+            >
+              Game week rank List
+            </Text>
+          </Card.Content>
+        </Card>
+        <Card
+          elevation={1}
+          style={{
+            alignItems: "center",
+            borderRadius: 0,
+            flex: 1,
+          }}
+        >
+          <Card.Content style={style.cardContent}>
+            <Text
+              style={{
+                textAlign: "center",
+                color: "#fff",
+                fontSize: 16,
+                fontWeight: "bold",
+              }}
+            >
+              Month rank List
+            </Text>
+          </Card.Content>
+        </Card>
+      </View>
+
+      <View style={style.cardHouse}>
+        <Card
+          elevation={1}
+          style={{
+            alignItems: "center",
+            borderRadius: 0,
+            backgroundColor: "#fff",
+            flex: 1,
+          }}
+        >
+          <Card.Content
+            style={style.cardContent}
+          >
+            <Text
+              style={{
+                textAlign: "center",
+                color: "#000",
+                fontSize: 16,
+                fontWeight: "bold",
+              }}
+            >
+              Penalized List
+            </Text>
+          </Card.Content>
+        </Card>
+        <Card
+          elevation={1}
+          style={{
+            alignItems: "center",
+            borderRadius: 0,
+            flex: 1,
+          }}
+        >
+          <Card.Content style={style.cardContent}>
+            <Text
+              style={{
+                textAlign: "center",
+                color: "#fff",
+                fontSize: 16,
+                fontWeight: "bold",
+              }}
+            >
+              Show Notifications
+            </Text>
+          </Card.Content>
+        </Card>
+      </View>
 
       <View style={{ display: "flex", flexDirection: "row", marginTop: 4 }}>
         <Card
@@ -149,28 +243,7 @@ export default function Dashboard({ navigation }: Props) {
                 fontWeight: "bold",
               }}
             >
-              Make Payments
-            </Text>
-          </Card.Content>
-        </Card>
-        <Card
-          elevation={1}
-          style={{
-            alignItems: "center",
-            borderRadius: 0,
-            flex: 1,
-          }}
-        >
-          <Card.Content>
-            <Text
-              style={{
-                textAlign: "center",
-                color: "#fff",
-                fontSize: 16,
-                fontWeight: "bold",
-              }}
-            >
-              Check payments
+              Send message
             </Text>
           </Card.Content>
         </Card>
@@ -184,8 +257,19 @@ const style = StyleSheet.create({
     flex: 1,
     padding: 8,
   },
+  cardHouse: {
+    display: "flex",
+    height: height * 0.1,
+    flexDirection: "row",
+    marginTop: 4,
+  },
   card: {
     width: "100%",
     backgroundColor: "#fff",
+  },
+  cardContent: {
+    flex: 1,
+    justifyContent: "center",
+    width: width * 1,
   },
 });
