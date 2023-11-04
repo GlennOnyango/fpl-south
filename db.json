@@ -1,0 +1,21 @@
+{
+    "users": [
+        {
+            "id": 1,
+            "phone": "0719458873",
+            "teamid": 90835,
+            "email": "glenntedd@gmail.com",
+            "teamName": "Teddie"
+        },
+        {
+            "id": 2,
+            "phone": "0719458873",
+            "teamid": 2131,
+            "email": "azizswada@gmail.com",
+            "teamName": "Teddie"
+        }
+    ],
+    "profile": {
+        "name": "typicode"
+    }
+}
