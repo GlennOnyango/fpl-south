@@ -13,7 +13,8 @@ const paymentCTX = {
     mpesaToken: "",
   },
   setPaymentDetails: (paymentDetails: any) => {},
-  
+  steps: 1,
+  setSteps: (steps: number) => {},
 };
 
 const PaymentContext = React.createContext(paymentCTX);
@@ -26,7 +27,9 @@ export const PaymentContextProvider = ({ children }: Props) => {
     weeks: "",
     amount: "",
     mpesaToken: "",
+    teamid: 0,
   });
+  const [steps, setSteps] = useState(1);
 
 
   return (
@@ -35,6 +38,10 @@ export const PaymentContextProvider = ({ children }: Props) => {
         paymentDetails: payment,
         setPaymentDetails: (paymentDetails: any) => {
           setPayment(paymentDetails);
+        },
+        steps: steps,
+        setSteps: (steps: number) => {
+          setSteps(steps);
         },
       }}
     >

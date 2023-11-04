@@ -186,9 +186,7 @@ export default function Dashboard({ navigation }: Props) {
             flex: 1,
           }}
         >
-          <Card.Content
-            style={style.cardContent}
-          >
+          <Card.Content style={style.cardContent}>
             <Text
               style={{
                 textAlign: "center",
@@ -270,6 +268,5 @@ const style = StyleSheet.create({
   cardContent: {
     flex: 1,
     justifyContent: "center",
-    width: width * 1,
   },
 });
