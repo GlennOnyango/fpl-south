@@ -1,7 +1,9 @@
 import { StyleSheet, Text, View } from "react-native";
 import { Button, Card, TextInput, useTheme } from "react-native-paper";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { usePost } from "../customHooks/usePost";
+import * as Network from 'expo-network';
 
 type userCredntial = {
   phoneNumber: string;
@@ -9,11 +11,12 @@ type userCredntial = {
 };
 
 type Props = {
-    navigation: any;   
-}
+  navigation: any;
+};
 
-export default function Login({navigation}: Props) {
+export default function Login({ navigation }: Props) {
   const theme = useTheme();
+  const [data, callApi, isLoading, errMessage] = usePost();
   const [credentials, setCredentials] = useState<userCredntial>({
     phoneNumber: "",
     password: "",
@@ -24,6 +27,20 @@ export default function Login({navigation}: Props) {
   const updateCredentials = (e: { type: string; text: string }) => {
     setCredentials({ ...credentials, [e.type]: e.text });
   };
+
+  const login = async() => {
+    //check password and phone number if populated
+
+    if (credentials.password.length > 0 && credentials.phoneNumber.length > 9) {
+      callApi(credentials, "users");
+      
+      console.log(await Network.getIpAddressAsync());
+    }
+  };
+
+  useEffect(() => {
+    console.log(data);
+  }, [data]);
 
   return (
     <View style={style.container}>
@@ -90,7 +107,7 @@ export default function Login({navigation}: Props) {
                   mode="elevated"
                   buttonColor={theme.colors.secondary}
                   textColor={"white"}
-                  onPress={() => navigation.navigate("Dashboard")}
+                  onPress={login}
                   disabled={false}
                   style={{
                     borderRadius: 1,
