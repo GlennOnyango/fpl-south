@@ -5,9 +5,7 @@ import {
   Text,
   View,
 } from "react-native";
-import { Button, Card, TextInput, useTheme } from "react-native-paper";
-import { useState } from "react";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Card, useTheme } from "react-native-paper";
 
 type Props = {
   navigation: any;
@@ -16,8 +14,6 @@ type Props = {
 const { width, height } = Dimensions.get("window");
 
 export default function Dashboard({ navigation }: Props) {
-  const theme = useTheme();
-
   const imageDashboard = require("../assets/dashborad/fplegypt.jpg");
   return (
     <View style={style.container}>
@@ -67,6 +63,7 @@ export default function Dashboard({ navigation }: Props) {
             borderRadius: 0,
             flex: 1,
           }}
+          onPress={() => navigation.navigate("LeagueStats")}
         >
           <Card.Content style={style.cardContent}>
             <Text

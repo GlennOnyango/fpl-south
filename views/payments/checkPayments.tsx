@@ -1,15 +1,6 @@
 import { useState } from "react";
-import {
-  StyleSheet,
-  View,
-  StatusBar,
-  FlatList,
-  Text,
-  ScrollView,
-} from "react-native";
+import { StyleSheet, StatusBar, ScrollView } from "react-native";
 import { List } from "react-native-paper";
-
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 type Props = {
   navigation: any;

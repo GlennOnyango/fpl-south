@@ -15,6 +15,7 @@ import { PaymentContextProvider } from "./context/payment";
 import { AuthContextProvider } from "./context/authcontext";
 import { QueryClient, QueryClientProvider } from "react-query";
 import CheckPayment from "./views/payments/checkPayments";
+import LeagueStats from "./views/statistics/leagueStats";
 
 const Stack = createStackNavigator();
 
@@ -54,6 +55,7 @@ export default function App() {
                 <Stack.Screen name="Dashboard" component={Dashboard} />
                 <Stack.Screen name="MakePayment" component={MakePayment} />
                 <Stack.Screen name="CheckPayments" component={CheckPayment} />
+                <Stack.Screen name="LeagueStats" component={LeagueStats} />
               </Stack.Navigator>
             </NavigationContainer>
           </PaperProvider>
