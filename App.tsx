@@ -14,6 +14,7 @@ import MakePayment from "./views/payments/makePayment";
 import { PaymentContextProvider } from "./context/payment";
 import { AuthContextProvider } from "./context/authcontext";
 import { QueryClient, QueryClientProvider } from "react-query";
+import CheckPayment from "./views/payments/checkPayments";
 
 const Stack = createStackNavigator();
 
@@ -52,6 +53,7 @@ export default function App() {
                 <Stack.Screen name="Login" component={Login} />
                 <Stack.Screen name="Dashboard" component={Dashboard} />
                 <Stack.Screen name="MakePayment" component={MakePayment} />
+                <Stack.Screen name="CheckPayments" component={CheckPayment} />
               </Stack.Navigator>
             </NavigationContainer>
           </PaperProvider>
