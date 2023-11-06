@@ -25,8 +25,6 @@ const theme = {
     accent: "#000",
     background: "#fff",
     surface: "#fff",
-    text: "#000",
-    disabled: "#000",
     placeholder: "#000",
     backdrop: "#000",
     onSurface: "#000",
