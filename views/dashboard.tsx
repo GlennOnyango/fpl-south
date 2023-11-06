@@ -114,6 +114,7 @@ export default function Dashboard({ navigation }: Props) {
             borderRadius: 0,
             flex: 1,
           }}
+          onPress={() => navigation.navigate("CheckPayments")}
         >
           <Card.Content style={style.cardContent}>
             <Text
