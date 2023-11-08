@@ -24,34 +24,64 @@ interface League extends ItemProps {
 }
 
 export default function MonthlyLeagueStats({ navigation }: Props) {
-  const [data, callApi, isLoading] = useFetchFPL();
-  const [standings, setStandings] = useState<any>([]);
+  const [data, callApi, isLoading, errorData] = useFetchFPL();
+  const [dataBootstrap, callApiBootstrap, isLoadingBootstrap, errorDataBoot] =
+    useFetchFPL();
   const [league, setLeague] = useState<any>({});
   const date = new Date();
-  const currentMonth = date.getMonth() + 1;
-  useEffect(() => {
-    //check if data is object or string
+  const currentMonth = date.getMonth();
 
+  const months = [6, 7, 8, 9, 10, 11, 12, 1, 2, 3, 4, 5];
+
+  const standings = useMemo(() => {
     if (typeof data === "object") {
       if ("fetch" in data) {
-        callApi("/standings/?page_new_entries=1&page_standings=1&phase=5");
+        callApi(
+          `leagues-classic/264658/standings/?page_new_entries=1&page_standings=1&phase=${
+            months[currentMonth] + 1
+          }`
+        );
       }
     } else {
       //convert string to object
       const dataObject = JSON.parse(data);
-      setStandings(dataObject["standings"]["results"]);
-      setLeague(dataObject["league"]);
-    }
-  }, [data]);
-
-  const orderStandings = useMemo(() => {
-    if (standings.length > 0) {
-      return standings.sort((a: any, b: any) => {
-        return b["event_total"] - a["event_total"];
-      });
+      return dataObject["standings"]["results"];
     }
     return [];
-  }, [standings]);
+  }, [data]);
+
+  const leagueWeeks = useMemo(() => {
+    if (standings.length > 0) {
+      if (typeof dataBootstrap === "object") {
+        if ("fetch" in dataBootstrap) {
+          callApiBootstrap("bootstrap-static/");
+        }
+      } else {
+        //convert string to object
+        let eventCurrent: number[] = [];
+
+        const dataObject = JSON.parse(dataBootstrap);
+        const events = dataObject["events"];
+        events.forEach((event: any) => {
+          const eventDate = new Date(event["deadline_time"]);
+          const eventMonth = eventDate.getMonth();
+          if (eventMonth === currentMonth) {
+            eventCurrent.push(event["id"]);
+          }
+        });
+
+        return eventCurrent;
+      }
+    }
+
+    return [];
+  }, [dataBootstrap, standings]);
+
+  useEffect(() => {
+    console.log(leagueWeeks);
+  }, [leagueWeeks]);
+
+  const monthlyCost = useMemo(() => {}, [standings, leagueWeeks]);
 
   const Item = ({
     event_total,
@@ -98,9 +128,12 @@ export default function MonthlyLeagueStats({ navigation }: Props) {
   );
 
   return (
-    <List.Section title={league.name} style={{ paddingBottom: 30 }}>
+    <List.Section
+      title={`Game Weeks ${leagueWeeks}`}
+      style={{ paddingBottom: 30 }}
+    >
       <ScrollView>
-        {orderStandings.map((e: ItemProps, index: number) => {
+        {standings.map((e: ItemProps, index: number) => {
           const eprime = { ...e, index: index };
           return <Item key={e.entry} {...eprime} />;
         })}
