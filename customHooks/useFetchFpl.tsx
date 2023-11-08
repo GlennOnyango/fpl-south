@@ -5,6 +5,8 @@ export const useFetchFPL = (token?: string) => {
   const [data, setData] = useState<any>({ fetch: 0 });
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
+  const [errorData, setError] = useState<any>(null);
+
   const callApi = useCallback(
     (url: string) => {
       setIsLoading(true);
@@ -18,11 +20,11 @@ export const useFetchFPL = (token?: string) => {
         })
         .catch((error) => {
           setIsLoading(false);
-          setData({ error: error });
+          setError({ error: error });
         });
     },
     [token]
   );
 
-  return [data, callApi, isLoading];
+  return [data, callApi, isLoading,errorData];
 };

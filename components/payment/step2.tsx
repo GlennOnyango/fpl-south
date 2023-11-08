@@ -24,9 +24,6 @@ export default function Step2({ navigation }: Props) {
     setCredentials({ ...credentials, [e.type]: e.text });
   };
 
-  useEffect(() => {
-    console.log(payCtx.paymentDetails);
-  }, [payCtx.paymentDetails]);
 
   const pay = () => {
     payCtx.setPaymentDetails({

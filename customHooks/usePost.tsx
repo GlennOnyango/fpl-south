@@ -32,8 +32,6 @@ export const usePost = (token?: string, file?: boolean) => {
       body: file ? formData : JSON.stringify(formData),
     };
 
-    console.log(url_send);
-
     fetch(url_send, extra)
       .then((res) => {
         if (!res.ok) {

@@ -52,7 +52,7 @@ export default function Dashboard({ navigation }: Props) {
                 fontWeight: "bold",
               }}
             >
-              General statistics
+              Monthly statistics
             </Text>
           </Card.Content>
         </Card>
@@ -74,7 +74,7 @@ export default function Dashboard({ navigation }: Props) {
                 fontWeight: "bold",
               }}
             >
-              League Statistics
+              Weekly Statistics
             </Text>
           </Card.Content>
         </Card>

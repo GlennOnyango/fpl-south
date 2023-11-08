@@ -42,10 +42,6 @@ export default function Step1({ navigation }: Props) {
     payCtx.setSteps(2);
   };
 
-  useEffect(() => {
-    console.log(payCtx.paymentDetails);
-  }, [payCtx.paymentDetails]);
-
 
   return (
     <View style={style.container}>
