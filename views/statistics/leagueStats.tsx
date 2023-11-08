@@ -4,7 +4,6 @@ import { useFetchFPL } from "../../customHooks/useFetchFpl";
 import {
   ActivityIndicator,
   List,
-  MD2Colors,
   Text,
   useTheme,
 } from "react-native-paper";

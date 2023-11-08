@@ -2,24 +2,23 @@ import { useEffect, useMemo, useState } from "react";
 import { StyleSheet, StatusBar, ScrollView } from "react-native";
 import { useFetchFPL } from "../../customHooks/useFetchFpl";
 import { List, Text } from "react-native-paper";
+import { useGetDamage } from "../../customHooks/getMonthlyCost";
 
 type Props = {
   navigation: any;
 };
 
-type ItemProps = {
+type ItemPropsCost = {
   id: number;
   event_total: number;
   player_name: string;
-  rank: number;
-  last_rank: number;
-  rank_sort: number;
   total: number;
   entry: number;
   entry_name: string;
+  cost: number;
 };
 
-interface League extends ItemProps {
+interface League extends ItemPropsCost {
   index: number;
 }
 
@@ -27,7 +26,7 @@ export default function MonthlyLeagueStats({ navigation }: Props) {
   const [data, callApi, isLoading, errorData] = useFetchFPL();
   const [dataBootstrap, callApiBootstrap, isLoadingBootstrap, errorDataBoot] =
     useFetchFPL();
-  const [league, setLeague] = useState<any>({});
+  const [dataCost, callApiCost, isLoadingCost, errorCost] = useGetDamage();
   const date = new Date();
   const currentMonth = date.getMonth();
 
@@ -77,11 +76,37 @@ export default function MonthlyLeagueStats({ navigation }: Props) {
     return [];
   }, [dataBootstrap, standings]);
 
-  useEffect(() => {
-    console.log(leagueWeeks);
-  }, [leagueWeeks]);
+  const dataCostSorted = useMemo(() => {
+    if (dataCost.length === 0) {
+      standings.forEach((entry: any) => {
+        const entryId = entry["entry"];
+        callApiCost(leagueWeeks, entryId);
+      });
+    } else if (dataCost.length > 0) {
+      const dataCombined = dataCost.map((e: any) => {
+        const entry = e.id;
+        const cost = e.cost;
+        const index = standings.findIndex((e: any) => e.entry === entry);
+        const entry_name = standings[index].entry_name;
+        const event_total = standings[index].event_total;
+        const player_name = standings[index].player_name;
+        return {
+          id: entry,
+          event_total: event_total - cost,
+          player_name: player_name,
+          total: standings[index].total,
+          entry: entry,
+          entry_name: entry_name,
+          cost: cost,
+        };
+      });
 
-  const monthlyCost = useMemo(() => {}, [standings, leagueWeeks]);
+      return dataCombined.sort((a: any, b: any) => {
+        return b["event_total"] - a["event_total"];
+      });
+    }
+    return [];
+  }, [standings, leagueWeeks, dataCost]);
 
   const Item = ({
     event_total,
@@ -103,6 +128,10 @@ export default function MonthlyLeagueStats({ navigation }: Props) {
 
         if (index === 1) {
           return <List.Icon {...props} icon="medal" color="silver" />;
+        }
+
+        if (index === 2) {
+          return <List.Icon {...props} icon="medal" color="brown" />;
         }
 
         return null;
@@ -133,7 +162,7 @@ export default function MonthlyLeagueStats({ navigation }: Props) {
       style={{ paddingBottom: 30 }}
     >
       <ScrollView>
-        {standings.map((e: ItemProps, index: number) => {
+        {dataCostSorted.map((e: ItemPropsCost, index: number) => {
           const eprime = { ...e, index: index };
           return <Item key={e.entry} {...eprime} />;
         })}

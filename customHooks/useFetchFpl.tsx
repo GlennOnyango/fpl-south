@@ -11,7 +11,6 @@ export const useFetchFPL = (token?: string) => {
     (url: string) => {
       setIsLoading(true);
       const url_send = `${api_url}${url}`;
-      console.log(url_send);
 
       fetch(url_send, { method: "GET", redirect: "follow" })
         .then((response) => response.text())
