@@ -5,7 +5,7 @@ import {
   Text,
   View,
 } from "react-native";
-import { Card, useTheme } from "react-native-paper";
+import { Card} from "react-native-paper";
 
 type Props = {
   navigation: any;
@@ -42,6 +42,7 @@ export default function Dashboard({ navigation }: Props) {
             backgroundColor: "#fff",
             flex: 1,
           }}
+          onPress={() => navigation.navigate("MonthlyLeagueStats")}
         >
           <Card.Content style={style.cardContent}>
             <Text

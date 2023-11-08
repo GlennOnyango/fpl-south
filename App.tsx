@@ -16,6 +16,7 @@ import { AuthContextProvider } from "./context/authcontext";
 import { QueryClient, QueryClientProvider } from "react-query";
 import CheckPayment from "./views/payments/checkPayments";
 import LeagueStats from "./views/statistics/leagueStats";
+import MonthlyLeagueStats from "./views/statistics/monthlyStats";
 
 const Stack = createStackNavigator();
 
@@ -56,6 +57,10 @@ export default function App() {
                 <Stack.Screen name="MakePayment" component={MakePayment} />
                 <Stack.Screen name="CheckPayments" component={CheckPayment} />
                 <Stack.Screen name="LeagueStats" component={LeagueStats} />
+                <Stack.Screen
+                  name="MonthlyLeagueStats"
+                  component={MonthlyLeagueStats}
+                />
               </Stack.Navigator>
             </NavigationContainer>
           </PaperProvider>
