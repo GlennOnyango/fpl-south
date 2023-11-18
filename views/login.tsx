@@ -1,12 +1,13 @@
 import { StyleSheet, Text, View } from "react-native";
-import { Button, Card, TextInput, useTheme } from "react-native-paper";
-import { useEffect, useMemo, useState } from "react";
+import { Button, TextInput, useTheme } from "react-native-paper";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { usePost } from "../customHooks/usePost";
-import * as Network from "expo-network";
+import { usePost } from "../customHooks/reactQuery/usePost";
+import AuthContext from "../context/authcontext";
+import * as SecureStore from "expo-secure-store";
 
 type userCredntial = {
-  phoneNumber: string;
+  email: string;
   password: string;
 };
 
@@ -16,9 +17,27 @@ type Props = {
 
 export default function Login({ navigation }: Props) {
   const theme = useTheme();
-  const [data, callApi, isLoading, errMessage] = usePost();
+  const authCTX = useContext(AuthContext);
+
+  //check if user is logged in
+  if (authCTX.userDetails.token.length > 0) {
+    navigation.navigate("Dashboard");
+  }
+
+  if (authCTX.userDetails.token.length === 0) {
+    //get user from secure store
+    SecureStore.getItemAsync("user").then((user) => {
+      if (user) {
+        authCTX.setUserDetails(JSON.parse(user));
+        navigation.navigate("Dashboard");
+      }
+    });
+  }
+
+  const { data, error, mutate, isError, isLoading, isSuccess } =
+    usePost("/auth/login");
   const [credentials, setCredentials] = useState<userCredntial>({
-    phoneNumber: "",
+    email: "",
     password: "",
   });
 
@@ -29,9 +48,8 @@ export default function Login({ navigation }: Props) {
   };
 
   const dis = useMemo(() => {
-    if (credentials.password.length > 0 || credentials.phoneNumber.length > 0) {
-      return credentials.password.length > 8 &&
-        credentials.phoneNumber.length > 9
+    if (credentials.password.length > 0 || credentials.email.length > 0) {
+      return credentials.password.length > 8 && credentials.email.length > 9
         ? false
         : true;
     }
@@ -42,14 +60,38 @@ export default function Login({ navigation }: Props) {
     //check password and phone number if populated
 
     if (!dis) {
-      if (
-        credentials.password.length > 0 &&
-        credentials.phoneNumber.length > 9
-      ) {
-        callApi(credentials, "users");
+      if (credentials.password.length > 0 && credentials.email.length > 0) {
+        mutate(credentials);
       }
     }
   };
+
+  useEffect(() => {
+    if (isSuccess) {
+      //save user details to context
+
+      if (data?.data.token) {
+        const userData = data?.data.data;
+        const token = data?.data.token;
+
+        console.log(userData);
+        console.log(token);
+
+        const user = {
+          phone: userData.phone,
+          teamid: userData.teamid,
+          email: userData.email,
+          teamName: userData.teamName,
+          token: token,
+        };
+        authCTX.setUserDetails(user);
+
+        //navigate to dashboard
+
+        navigation.navigate("Dashboard");
+      }
+    }
+  }, [data, isSuccess]);
 
   return (
     <View style={style.container}>
@@ -64,15 +106,14 @@ export default function Login({ navigation }: Props) {
       <View style={style.containerGroup}>
         <TextInput
           style={style.input}
-          label="Phone number"
+          label="Email"
           mode="outlined"
           onChangeText={(newText) =>
-            updateCredentials({ type: "phoneNumber", text: newText })
+            updateCredentials({ type: "email", text: newText })
           }
-          value={credentials.phoneNumber}
-          inputMode={"tel"}
-          keyboardType={"phone-pad"}
-          maxLength={12}
+          value={credentials.email}
+          inputMode={"email"}
+          keyboardType={"default"}
         />
       </View>
 
@@ -110,7 +151,7 @@ export default function Login({ navigation }: Props) {
               width: "48%",
             }}
           >
-            <Button mode="outlined" onPress={()=>navigation.navigate("Dashboard")}>
+            <Button mode="outlined" onPress={login}>
               Login
             </Button>
           </View>
@@ -129,8 +170,9 @@ export default function Login({ navigation }: Props) {
           </View>
         </View>
       </View>
-
-      {dis ? <Text >{"Fill the text filleds to login"}</Text> : null}
+      {isLoading ? <Text>{"Loading..."}</Text> : null}
+      {isError ? <Text>{`Login failed try again.${error}`}</Text> : null}
+      {dis ? <Text>{"Fill the text filleds to login"}</Text> : null}
     </View>
   );
 }
