@@ -1,11 +1,14 @@
 import { StyleSheet, Text, View } from "react-native";
 import { Button, Card, TextInput, useTheme } from "react-native-paper";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { usePost } from "../customHooks/reactQuery/usePost";
 
 type userCredntial = {
   phoneNumber: string;
   password: string;
+  teamID: string;
+  email: string;
 };
 
 type Props = {
@@ -14,9 +17,13 @@ type Props = {
 
 export default function CreateAccount({ navigation }: Props) {
   const theme = useTheme();
+  const { data, error, reset, mutate, isLoading, isSuccess } =
+    usePost("/auth/register");
   const [credentials, setCredentials] = useState<userCredntial>({
     phoneNumber: "",
     password: "",
+    teamID: "",
+    email: "",
   });
 
   const [showPassword, setShowPassword] = useState(true);
@@ -25,6 +32,39 @@ export default function CreateAccount({ navigation }: Props) {
     setCredentials({ ...credentials, [e.type]: e.text });
   };
 
+  const dis = useMemo(() => {
+    if (
+      credentials.password.length > 0 ||
+      credentials.email.length > 0 ||
+      credentials.phoneNumber.length > 0 ||
+      credentials.teamID.length > 0
+    ) {
+      return credentials.password.length > 8 &&
+        credentials.email.length > 9 &&
+        credentials.phoneNumber.length > 9 &&
+        credentials.teamID.length > 0
+        ? false
+        : true;
+    }
+    return false;
+  }, [credentials]);
+
+  if (isSuccess) {
+    navigation.navigate("Login");
+  }
+
+  // useEffect(() => {
+
+  //   if (error) {
+  //     reset();
+  //   }
+
+  //   if (data) {
+  //     reset();
+  //   }
+
+  // }, [data, error, isLoading, isSuccess]);
+
   return (
     <View style={style.container}>
       <View style={{ alignItems: "center", justifyContent: "center" }}>
@@ -32,6 +72,19 @@ export default function CreateAccount({ navigation }: Props) {
           name="security-network"
           size={102}
           color={theme.colors.secondary}
+        />
+      </View>
+
+      <View style={style.containerGroup}>
+        <TextInput
+          style={style.input}
+          label="email"
+          mode="outlined"
+          onChangeText={(newText) =>
+            updateCredentials({ type: "email", text: newText })
+          }
+          value={credentials.email}
+          inputMode={"email"}
         />
       </View>
 
@@ -52,24 +105,12 @@ export default function CreateAccount({ navigation }: Props) {
       <View style={style.containerGroup}>
         <TextInput
           style={style.input}
-          label="Full name"
-          mode="outlined"
-          onChangeText={(newText) =>
-            updateCredentials({ type: "fullName", text: newText })
-          }
-          value={credentials.phoneNumber}
-          inputMode={"text"}
-        />
-      </View>
-      <View style={style.containerGroup}>
-        <TextInput
-          style={style.input}
           label="Team id"
           mode="outlined"
           onChangeText={(newText) =>
             updateCredentials({ type: "teamID", text: newText })
           }
-          value={credentials.phoneNumber}
+          value={credentials.teamID}
           inputMode={"text"}
         />
       </View>
@@ -96,6 +137,9 @@ export default function CreateAccount({ navigation }: Props) {
       </View>
 
       <View style={style.containerGroup}>
+        {dis ? (
+          <Text style={{ color: theme.colors.error }}>{"Fill all fields"}</Text>
+        ) : null}
         <View
           style={{
             display: "flex",
@@ -110,8 +154,13 @@ export default function CreateAccount({ navigation }: Props) {
           >
             <Button
               mode="outlined"
-              onPress={() => console.log("Pressed")}
-              disabled={false}
+              onPress={() => {
+                if (!dis) {
+                  return;
+                } else {
+                  mutate(credentials);
+                }
+              }}
             >
               Register
             </Button>
@@ -160,6 +209,5 @@ const style = StyleSheet.create({
   },
   btnActive: {
     backgroundColor: "#1a237e",
-  
-  }
+  },
 });
