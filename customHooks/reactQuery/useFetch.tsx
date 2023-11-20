@@ -34,6 +34,10 @@ export const useFetch = (url: string, queryKey: string, token?: string) => {
         },
       })
       .then((res) => res.data);
+  }, {
+    onError: (err) => {
+      console.log(err);
+    }
   });
 
   return {
