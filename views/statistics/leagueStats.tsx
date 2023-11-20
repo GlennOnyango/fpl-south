@@ -1,14 +1,8 @@
-import { useMemo } from "react";
+import { useContext, useEffect } from "react";
 import { ScrollView, View } from "react-native";
-import { useFetchFPL } from "../../customHooks/useFetchFpl";
-import {
-  ActivityIndicator,
-  List,
-  Text,
-  useTheme,
-} from "react-native-paper";
-import { useGetDamage } from "../../customHooks/getDamage";
-
+import { ActivityIndicator, List, Text, useTheme } from "react-native-paper";
+import { useFetch } from "../../customHooks/reactQuery/useFetch";
+import AuthContext from "../../context/authcontext";
 type Props = {
   navigation: any;
 };
@@ -29,75 +23,12 @@ interface League extends ItemPropsCost {
 
 export default function LeagueStats({ navigation }: Props) {
   const theme = useTheme();
-  const [data, callApi, isLoading, errorData] = useFetchFPL();
-  const [dataBootstrap, callApiBootstrap, isLoadingBootstrap, errorDataBoot] =
-    useFetchFPL();
-  const [dataCost, callApiCost, isLoadingCost, errorCost] = useGetDamage();
-
-  const standings = useMemo(() => {
-    if (typeof data === "object") {
-      if ("fetch" in data) {
-        callApi("leagues-classic/264658/standings/");
-      }
-    } else {
-      //convert string to object
-      const dataObject = JSON.parse(data);
-      return dataObject["standings"]["results"];
-    }
-    return [];
-  }, [data]);
-
-  const eventCurrent = useMemo(() => {
-    let eventCurrent = 0;
-    if (typeof dataBootstrap === "object") {
-      if ("fetch" in dataBootstrap) {
-        callApiBootstrap("bootstrap-static/");
-      }
-      eventCurrent = 0;
-    } else {
-      //convert string to object
-      const dataObject = JSON.parse(dataBootstrap);
-      const events = dataObject["events"];
-      events.forEach((event: any) => {
-        if (event["is_current"]) {
-          eventCurrent = event["id"];
-        }
-      });
-    }
-    return eventCurrent;
-  }, [dataBootstrap]);
-
-  const dataCostSorted = useMemo(() => {
-    if (dataCost.length === 0) {
-      if (standings.length > 0 && eventCurrent !== 0) {
-        const userList = standings.map((e: any) => e.entry);
-        callApiCost(eventCurrent, userList);
-      }
-    } else if (dataCost.length > 0) {
-      const dataCombined = dataCost.map((e: any) => {
-        const entry = e.id;
-        const cost = e.cost;
-        const index = standings.findIndex((e: any) => e.entry === entry);
-        const entry_name = standings[index].entry_name;
-        const event_total = standings[index].event_total;
-        const player_name = standings[index].player_name;
-        return {
-          id: entry,
-          event_total: event_total - cost,
-          player_name: player_name,
-          total: standings[index].total,
-          entry: entry,
-          entry_name: entry_name,
-          cost: cost,
-        };
-      });
-
-      return dataCombined.sort((a: any, b: any) => {
-        return b["event_total"] - a["event_total"];
-      });
-    }
-    return [];
-  }, [dataCost, standings, eventCurrent]);
+  const authCTX = useContext(AuthContext);
+  const { data, isError, isFetching, isLoading } = useFetch(
+    "/rank/weekly",
+    "weekly-rank",
+    authCTX.userDetails.token
+  );
 
   const Item = ({
     event_total,
@@ -143,7 +74,7 @@ export default function LeagueStats({ navigation }: Props) {
     </List.Accordion>
   );
 
-  if (isLoading || isLoadingBootstrap || isLoadingCost) {
+  if (isLoading || isFetching) {
     return (
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
         <ActivityIndicator
@@ -155,7 +86,7 @@ export default function LeagueStats({ navigation }: Props) {
     );
   }
 
-  if (errorData || errorDataBoot || errorCost) {
+  if (isError) {
     return (
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
         <Text>
@@ -166,12 +97,9 @@ export default function LeagueStats({ navigation }: Props) {
   }
 
   return (
-    <List.Section
-      title={`Game weeek ${eventCurrent}`}
-      style={{ paddingBottom: 30 }}
-    >
+    <List.Section title={`Game weeek `} style={{ paddingBottom: 30 }}>
       <ScrollView>
-        {dataCostSorted.map((e: ItemPropsCost, index: number) => {
+        {data.data.map((e: ItemPropsCost, index: number) => {
           const eprime = { ...e, index: index };
           return <Item key={e.entry} {...eprime} />;
         })}

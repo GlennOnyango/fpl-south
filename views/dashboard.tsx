@@ -5,7 +5,10 @@ import {
   Text,
   View,
 } from "react-native";
-import { Card} from "react-native-paper";
+import { Card } from "react-native-paper";
+import { useFetch } from "../customHooks/reactQuery/useFetch";
+import { useContext, useEffect } from "react";
+import AuthContext from "../context/authcontext";
 
 type Props = {
   navigation: any;
@@ -14,6 +17,20 @@ type Props = {
 const { width, height } = Dimensions.get("window");
 
 export default function Dashboard({ navigation }: Props) {
+  const authCTX = useContext(AuthContext);
+  const { data, isError, isSuccess } = useFetch(
+    "/auth/",
+    "token-checker",
+    authCTX.userDetails.token
+  );
+
+  useEffect(() => {
+    if (isError) {
+      authCTX.logout();
+      navigation.navigate("Login");
+    }
+  }, [data, isSuccess, isError]);
+
   const imageDashboard = require("../assets/dashborad/fplegypt.jpg");
   return (
     <View style={style.container}>

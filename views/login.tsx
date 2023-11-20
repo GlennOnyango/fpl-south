@@ -74,9 +74,6 @@ export default function Login({ navigation }: Props) {
         const userData = data?.data.data;
         const token = data?.data.token;
 
-        console.log(userData);
-        console.log(token);
-
         const user = {
           phone: userData.phone,
           teamid: userData.teamid,
