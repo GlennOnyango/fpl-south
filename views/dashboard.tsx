@@ -18,18 +18,19 @@ const { width, height } = Dimensions.get("window");
 
 export default function Dashboard({ navigation }: Props) {
   const authCTX = useContext(AuthContext);
-  const { data, isError, isSuccess } = useFetch(
+  const { data,error, isError, isSuccess } = useFetch(
     "/auth/",
     "token-checker",
     authCTX.userDetails.token
   );
+
 
   useEffect(() => {
     if (isError) {
       authCTX.logout();
       navigation.navigate("Login");
     }
-  }, [data, isSuccess, isError]);
+  }, [data, isSuccess, isError, error]);
 
   const imageDashboard = require("../assets/dashborad/fplegypt.jpg");
   return (

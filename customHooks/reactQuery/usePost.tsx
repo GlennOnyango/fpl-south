@@ -24,6 +24,7 @@ export const usePost = (url: string, token?: string) => {
         headers: {
           "Content-Type": "application/json",
         },
+        timeout: 30000,
       });
     }
 

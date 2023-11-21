@@ -32,6 +32,7 @@ export const useFetch = (url: string, queryKey: string, token?: string) => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
+        timeout: 30000,
       })
       .then((res) => res.data);
   }, {

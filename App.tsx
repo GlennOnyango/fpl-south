@@ -32,7 +32,9 @@ const theme = {
     backdrop: "#000",
     onSurface: "#000",
     notification: "#000",
-    secondary: "#1a237e",
+    secondary: "#2196f3",
+    text: "#000",
+    error: "#f13a59",
   },
 };
 
@@ -46,13 +48,18 @@ export default function App() {
           <PaperProvider theme={theme}>
             <NavigationContainer>
               <Stack.Navigator
-                initialRouteName="CreateAccount"
+                initialRouteName="Login"
                 screenOptions={{
+                  headerShown: false,
                   header: (props: any) => <CustomNavigationBar {...props} />,
                 }}
               >
                 <Stack.Screen name="CreateAccount" component={CreateAccount} />
-                <Stack.Screen name="Login" component={Login} />
+                <Stack.Screen
+                  name="Login"
+                  component={Login}
+                  //options={{ headerShown: true }}
+                />
                 <Stack.Screen name="Dashboard" component={Dashboard} />
                 <Stack.Screen name="MakePayment" component={MakePayment} />
                 <Stack.Screen name="CheckPayments" component={CheckPayment} />

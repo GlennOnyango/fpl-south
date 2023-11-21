@@ -1,14 +1,18 @@
 import { StyleSheet, Text, View } from "react-native";
-import { Button, Card, TextInput, useTheme } from "react-native-paper";
+import { Button, Card, Icon, TextInput, useTheme } from "react-native-paper";
 import { useEffect, useMemo, useState } from "react";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { usePost } from "../customHooks/reactQuery/usePost";
+import SelectDropdown from "react-native-select-dropdown";
+import { ScrollView } from "react-native-gesture-handler";
 
 type userCredntial = {
   phoneNumber: string;
   password: string;
   teamID: string;
+  leagueID: string;
   email: string;
+  userType: string;
 };
 
 type Props = {
@@ -19,11 +23,14 @@ export default function CreateAccount({ navigation }: Props) {
   const theme = useTheme();
   const { data, error, reset, mutate, isLoading, isSuccess } =
     usePost("/auth/register");
+  const [genericError, setGenericError] = useState<string>("");
   const [credentials, setCredentials] = useState<userCredntial>({
     phoneNumber: "",
     password: "",
     teamID: "",
+    leagueID: "",
     email: "",
+    userType: "league participant",
   });
 
   const [showPassword, setShowPassword] = useState(true);
@@ -33,12 +40,17 @@ export default function CreateAccount({ navigation }: Props) {
   };
 
   const dis = useMemo(() => {
-    if (
-      credentials.password.length > 0 ||
-      credentials.email.length > 0 ||
-      credentials.phoneNumber.length > 0 ||
-      credentials.teamID.length > 0
-    ) {
+    if (credentials.userType === "league admin") {
+      return credentials.password.length > 8 &&
+        credentials.email.length > 9 &&
+        credentials.phoneNumber.length > 9 &&
+        credentials.teamID.length > 0 &&
+        credentials.leagueID.length > 0
+        ? false
+        : true;
+    }
+
+    if (credentials.userType === "league participant") {
       return credentials.password.length > 8 &&
         credentials.email.length > 9 &&
         credentials.phoneNumber.length > 9 &&
@@ -46,6 +58,7 @@ export default function CreateAccount({ navigation }: Props) {
         ? false
         : true;
     }
+
     return false;
   }, [credentials]);
 
@@ -66,96 +79,171 @@ export default function CreateAccount({ navigation }: Props) {
   // }, [data, error, isLoading, isSuccess]);
 
   return (
-    <View style={style.container}>
-      <View style={{ alignItems: "center", justifyContent: "center" }}>
-        <MaterialCommunityIcons
-          name="security-network"
-          size={102}
-          color={theme.colors.secondary}
-        />
-      </View>
+    <ScrollView>
+      <View style={style.container}>
+        <View style={{ alignItems: "center", justifyContent: "center" }}>
+          <MaterialCommunityIcons
+            name="security-network"
+            size={102}
+            color={theme.colors.secondary}
+          />
+        </View>
 
-      <View style={style.containerGroup}>
-        <TextInput
-          style={style.input}
-          label="email"
-          mode="outlined"
-          onChangeText={(newText) =>
-            updateCredentials({ type: "email", text: newText })
-          }
-          value={credentials.email}
-          inputMode={"email"}
-        />
-      </View>
+        <View style={style.containerGroup}>
+          <SelectDropdown
+            data={["Select user type", "league participant", "league admin"]}
+            onSelect={(selectedItem, index) => {
+              updateCredentials({
+                type: "userType",
+                text: selectedItem,
+              });
+            }}
+            buttonTextAfterSelection={(selectedItem, index) => {
+              return selectedItem;
+            }}
+            rowTextForSelection={(item, index) => {
+              return item;
+            }}
+            renderDropdownIcon={() => (
+              <MaterialCommunityIcons
+                name="menu-down"
+                size={20}
+                color={"grey"}
+              />
+            )}
+            buttonStyle={{
+              width: "100%",
+              height: 50,
+              backgroundColor: "#fff",
+              borderBlockColor: "grey",
+              borderRadius: 5,
+              borderWidth: 1,
+            }}
+            buttonTextStyle={{
+              color: "#000",
+              textAlign: "left",
+            }}
+            dropdownStyle={{
+              width: "94%",
+              backgroundColor: theme.colors.background,
+            }}
+            rowStyle={{
+              backgroundColor: theme.colors.background,
+            }}
+            defaultValueByIndex={0}
+          />
+        </View>
 
-      <View style={style.containerGroup}>
-        <TextInput
-          style={style.input}
-          label="Phone number"
-          mode="outlined"
-          onChangeText={(newText) =>
-            updateCredentials({ type: "phoneNumber", text: newText })
-          }
-          value={credentials.phoneNumber}
-          inputMode={"tel"}
-          keyboardType={"phone-pad"}
-          maxLength={12}
-        />
-      </View>
-      <View style={style.containerGroup}>
-        <TextInput
-          style={style.input}
-          label="Team id"
-          mode="outlined"
-          onChangeText={(newText) =>
-            updateCredentials({ type: "teamID", text: newText })
-          }
-          value={credentials.teamID}
-          inputMode={"text"}
-        />
-      </View>
+        <View style={style.containerGroup}>
+          <TextInput
+            style={style.input}
+            label="email"
+            mode="outlined"
+            onChangeText={(newText) =>
+              updateCredentials({ type: "email", text: newText })
+            }
+            value={credentials.email}
+            inputMode={"email"}
+          />
+        </View>
 
-      <View style={style.containerGroup}>
-        <TextInput
-          style={style.input}
-          label="Password"
-          mode="outlined"
-          onChangeText={(newText) =>
-            updateCredentials({ type: "password", text: newText })
-          }
-          value={credentials.password}
-          textContentType={"password"}
-          secureTextEntry={showPassword}
-          right={
-            <TextInput.Icon
-              icon="eye"
-              onPress={(e) => setShowPassword(!showPassword)}
-              forceTextInputFocus={false}
-            />
-          }
-        />
-      </View>
+        <View style={style.containerGroup}>
+          <TextInput
+            style={style.input}
+            label="Phone number"
+            mode="outlined"
+            onChangeText={(newText) =>
+              updateCredentials({ type: "phoneNumber", text: newText })
+            }
+            value={credentials.phoneNumber}
+            inputMode={"tel"}
+            keyboardType={"phone-pad"}
+            maxLength={12}
+          />
+        </View>
+        <View style={style.containerGroup}>
+          <TextInput
+            style={style.input}
+            label="Team id"
+            mode="outlined"
+            onChangeText={(newText) =>
+              updateCredentials({ type: "teamID", text: newText })
+            }
+            value={credentials.teamID}
+            inputMode={"text"}
+          />
+        </View>
 
-      <View style={style.containerGroup}>
-        {dis ? (
-          <Text style={{ color: theme.colors.error }}>{"Fill all fields"}</Text>
-        ) : null}
-        <View
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "space-around",
-          }}
-        >
+        {
+          // if user type is league admin
+          credentials.userType === "league admin" ? (
+            <View style={style.containerGroup}>
+              <TextInput
+                style={style.input}
+                label="League id"
+                mode="outlined"
+                onChangeText={(newText) =>
+                  updateCredentials({ type: "leagueID", text: newText })
+                }
+                value={credentials.leagueID}
+                inputMode={"text"}
+              />
+            </View>
+          ) : null
+        }
+
+        <View style={style.containerGroup}>
+          <TextInput
+            style={style.input}
+            label="Password"
+            mode="outlined"
+            onChangeText={(newText) =>
+              updateCredentials({ type: "password", text: newText })
+            }
+            value={credentials.password}
+            textContentType={"password"}
+            secureTextEntry={showPassword}
+            right={
+              <TextInput.Icon
+                icon="eye"
+                onPress={(e) => setShowPassword(!showPassword)}
+                forceTextInputFocus={false}
+              />
+            }
+          />
+        </View>
+
+        <View style={style.containerGroup}>
+          {genericError.length > 0 ? (
+            <Text
+              style={{
+                color: "red",
+                textAlign: "center",
+                marginVertical: 5,
+              }}
+            >
+              {genericError}
+            </Text>
+          ) : null}
           <View
             style={{
-              width: "48%",
+              display: "flex",
+              flexDirection: "column",
             }}
           >
             <Button
               mode="outlined"
+              buttonColor={dis ? "#cccccc" : theme.colors.secondary}
+              textColor="#fff"
+              style={{
+                height: 50,
+                alignContent: "center",
+                justifyContent: "center",
+                borderColor: dis ? "#cccccc" : theme.colors.secondary,
+              }}
               onPress={() => {
                 if (!dis) {
+                  setGenericError("Fill all fields to register");
                   return;
                 } else {
                   mutate(credentials);
@@ -164,23 +252,20 @@ export default function CreateAccount({ navigation }: Props) {
             >
               Register
             </Button>
-          </View>
 
-          <View
-            style={{
-              width: "48%",
-            }}
-          >
-            <Button
-              mode="outlined"
-              onPress={() => navigation.navigate("Login")}
-            >
-              Login
-            </Button>
+            <Text style={{ textAlign: "center", marginVertical: 16 }}>
+              I already have an account.{" "}
+              <Text
+                style={{ color: theme.colors.secondary }}
+                onPress={() => navigation.navigate("Login")}
+              >
+                Access my account.
+              </Text>
+            </Text>
           </View>
         </View>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 

@@ -1,10 +1,17 @@
-import { StyleSheet, Text, View } from "react-native";
-import { Button, TextInput, useTheme } from "react-native-paper";
+import { StyleSheet, View } from "react-native";
+import {
+  ActivityIndicator,
+  Button,
+  Text,
+  TextInput,
+  useTheme,
+} from "react-native-paper";
 import { useContext, useEffect, useMemo, useState } from "react";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons, Entypo } from "@expo/vector-icons";
 import { usePost } from "../customHooks/reactQuery/usePost";
 import AuthContext from "../context/authcontext";
 import * as SecureStore from "expo-secure-store";
+import { StatusBar } from "expo-status-bar";
 
 type userCredntial = {
   email: string;
@@ -48,12 +55,9 @@ export default function Login({ navigation }: Props) {
   };
 
   const dis = useMemo(() => {
-    if (credentials.password.length > 0 || credentials.email.length > 0) {
-      return credentials.password.length > 8 && credentials.email.length > 9
-        ? false
-        : true;
-    }
-    return false;
+    return credentials.password.length > 8 && credentials.email.length > 9
+      ? false
+      : true;
   }, [credentials]);
 
   const login = async () => {
@@ -91,86 +95,131 @@ export default function Login({ navigation }: Props) {
   }, [data, isSuccess]);
 
   return (
-    <View style={style.container}>
-      <View style={{ alignItems: "center", justifyContent: "center" }}>
-        <MaterialCommunityIcons
-          name="security"
-          size={102}
-          color={theme.colors.secondary}
-        />
-      </View>
+    <>
+      <View style={style.container}>
+        <View style={{ alignItems: "center", justifyContent: "center" }}>
+          <Entypo name="colours" size={102} color={"grey"} />
 
-      <View style={style.containerGroup}>
-        <TextInput
-          style={style.input}
-          label="Email"
-          mode="outlined"
-          onChangeText={(newText) =>
-            updateCredentials({ type: "email", text: newText })
-          }
-          value={credentials.email}
-          inputMode={"email"}
-          keyboardType={"default"}
-        />
-      </View>
+          <Text
+            style={{
+              color: theme.colors.secondary,
+              marginVertical: 16,
+            }}
+            variant="titleLarge"
+          >
+            Welcome Back!
+          </Text>
+        </View>
 
-      <View style={style.containerGroup}>
-        <TextInput
-          style={style.input}
-          label="Password"
-          mode="outlined"
-          onChangeText={(newText) =>
-            updateCredentials({ type: "password", text: newText })
-          }
-          value={credentials.password}
-          textContentType={"password"}
-          secureTextEntry={showPassword}
-          right={
-            <TextInput.Icon
-              icon="eye"
-              onPress={(e) => setShowPassword(!showPassword)}
-              forceTextInputFocus={false}
-            />
-          }
-        />
-      </View>
+        <View style={style.containerGroup}>
+          <TextInput
+            style={style.input}
+            label="Email"
+            mode="outlined"
+            onChangeText={(newText) =>
+              updateCredentials({ type: "email", text: newText })
+            }
+            value={credentials.email}
+            inputMode={"email"}
+            keyboardType={"default"}
+          />
+        </View>
 
-      <View style={style.containerGroup}>
-        <View
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "space-around",
-          }}
-        >
+        <View style={style.containerGroup}>
+          <TextInput
+            style={style.input}
+            label="Password"
+            mode="outlined"
+            onChangeText={(newText) =>
+              updateCredentials({ type: "password", text: newText })
+            }
+            value={credentials.password}
+            textContentType={"password"}
+            secureTextEntry={showPassword}
+            right={
+              <TextInput.Icon
+                icon="eye"
+                onPress={(e) => setShowPassword(!showPassword)}
+                forceTextInputFocus={false}
+              />
+            }
+          />
+        </View>
+
+        <View style={style.containerGroup}>
           <View
             style={{
-              width: "48%",
+              display: "flex",
+              flexDirection: "column",
             }}
           >
-            <Button mode="outlined" onPress={login}>
-              Login
-            </Button>
-          </View>
+            {isError ? (
+              <Text
+                style={{
+                  textAlign: "center",
+                  color: theme.colors.error,
+                  marginVertical: 16,
+                }}
+                variant="bodySmall"
+              >
+                Login failed. Please try again.
+              </Text>
+            ) : null}
 
-          <View
-            style={{
-              width: "48%",
-            }}
-          >
-            <Button
-              mode="outlined"
+            <Text
+              style={{
+                color: theme.colors.secondary,
+                marginVertical: 16,
+                textAlign: "right",
+              }}
+              variant="bodyLarge"
               onPress={() => navigation.navigate("CreateAccount")}
             >
-              Register
+              Forgot password
+            </Text>
+
+            <Button
+              mode="outlined"
+              onPress={login}
+              buttonColor={dis ? "#cccccc" : theme.colors.secondary}
+              textColor="#fff"
+              style={{
+                height: 50,
+                alignContent: "center",
+                justifyContent: "center",
+                borderColor: dis ? "#cccccc" : theme.colors.secondary,
+              }}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <ActivityIndicator
+                  animating={true}
+                  color={theme.colors.secondary}
+                />
+              ) : (
+                "Login"
+              )}{" "}
             </Button>
+
+            <Text
+              style={{ textAlign: "center", marginVertical: 16 }}
+              variant="bodyLarge"
+            >
+              Don't have an account?{"  "}
+              <Text
+                style={{ color: theme.colors.secondary }}
+                onPress={() => navigation.navigate("CreateAccount")}
+                variant="titleLarge"
+              >
+                Signup
+              </Text>
+            </Text>
           </View>
         </View>
       </View>
-      {isLoading ? <Text>{"Loading..."}</Text> : null}
-      {isError ? <Text>{`Login failed try again.${error}`}</Text> : null}
-      {dis ? <Text>{"Fill the text filleds to login"}</Text> : null}
-    </View>
+
+      <StatusBar backgroundColor="transparent" style="dark" animated />
+    </>
   );
 }
 
@@ -178,8 +227,9 @@ const style = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
+    justifyContent: "center",
     paddingHorizontal: 10,
-    paddingTop: 30,
+    paddingTop: 20,
   },
   card: {
     width: "100%",
