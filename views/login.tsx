@@ -28,15 +28,25 @@ export default function Login({ navigation }: Props) {
 
   //check if user is logged in
   if (authCTX.userDetails.token.length > 0) {
-    navigation.navigate("Dashboard");
+    if (authCTX.userDetails.admin) {
+      navigation.navigate("AdminDashboard");
+    } else {
+      navigation.navigate("Dashboard");
+    }
   }
 
   if (authCTX.userDetails.token.length === 0) {
     //get user from secure store
     SecureStore.getItemAsync("user").then((user) => {
       if (user) {
-        authCTX.setUserDetails(JSON.parse(user));
-        navigation.navigate("Dashboard");
+        const userData = JSON.parse(user);
+        authCTX.setUserDetails(userData);
+        
+        if (userData.userDetails.admin) {
+          navigation.navigate("AdminDashboard");
+        } else {
+          navigation.navigate("Dashboard");
+        }
       }
     });
   }
@@ -89,7 +99,13 @@ export default function Login({ navigation }: Props) {
           authCTX.setUserDetails(user);
           //navigate to dashboard
 
-          navigation.navigate("Dashboard");
+          if (user.admin) {
+            console.log("admin");
+            navigation.navigate("AdminDashboard");
+          } else {
+            console.log("not admin");
+            navigation.navigate("Dashboard");
+          }
         } else {
           authCTX.logout();
           navigation.navigate("SignUpBoard");

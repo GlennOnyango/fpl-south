@@ -6,9 +6,9 @@ import {
   View,
 } from "react-native";
 import { Card } from "react-native-paper";
-import { useFetch } from "../customHooks/reactQuery/useFetch";
+import { useFetch } from "../../customHooks/reactQuery/useFetch";
 import { useContext, useEffect } from "react";
-import AuthContext from "../context/authcontext";
+import AuthContext from "../../context/authcontext";
 
 type Props = {
   navigation: any;
@@ -16,7 +16,7 @@ type Props = {
 
 const { width, height } = Dimensions.get("window");
 
-export default function Dashboard({ navigation }: Props) {
+export default function AdminDashboard({ navigation }: Props) {
   const authCTX = useContext(AuthContext);
   const { data, error, isError, isSuccess } = useFetch(
     "/auth/",
@@ -31,7 +31,7 @@ export default function Dashboard({ navigation }: Props) {
     }
   }, [data, isSuccess, isError, error]);
 
-  const imageDashboard = require("../assets/dashborad/fplegypt.jpg");
+  const imageDashboard = require("../../assets/dashborad/fplegypt.jpg");
   return (
     <View style={style.container}>
       <Card
@@ -257,40 +257,12 @@ export default function Dashboard({ navigation }: Props) {
                 fontWeight: "bold",
               }}
             >
-              Send message Home
+              Send message
             </Text>
           </Card.Content>
         </Card>
       </View>
 
-      <View style={{ display: "flex", flexDirection: "row", marginTop: 4 }}>
-        <Card
-          elevation={1}
-          style={{
-            alignItems: "center",
-            borderRadius: 0,
-            backgroundColor: "#fff",
-            flex: 1,
-          }}
-          onPress={() => {
-            authCTX.logout();
-            navigation.navigate("Login");
-          }}
-        >
-          <Card.Content>
-            <Text
-              style={{
-                textAlign: "center",
-                color: "#000",
-                fontSize: 16,
-                fontWeight: "bold",
-              }}
-            >
-              Logout
-            </Text>
-          </Card.Content>
-        </Card>
-      </View>
     </View>
   );
 }
@@ -298,13 +270,13 @@ export default function Dashboard({ navigation }: Props) {
 const style = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 8,
   },
   cardHouse: {
     display: "flex",
     height: height * 0.1,
     flexDirection: "row",
     marginTop: 4,
+    marginHorizontal: 4,
   },
   card: {
     width: "100%",

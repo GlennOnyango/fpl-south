@@ -18,6 +18,7 @@ import CheckPayment from "./views/payments/checkPayments";
 import LeagueStats from "./views/statistics/leagueStats";
 import MonthlyLeagueStats from "./views/statistics/monthlyStats";
 import SignUpBoard from "./views/signUpBoard";
+import AdminDashboard from "./views/admin/dashboard";
 
 const Stack = createStackNavigator();
 
@@ -56,13 +57,18 @@ export default function App() {
                 }}
               >
                 <Stack.Screen name="CreateAccount" component={CreateAccount} />
-                <Stack.Screen name="SignUpBoard" component={SignUpBoard}/>
+                <Stack.Screen name="SignUpBoard" component={SignUpBoard} />
                 <Stack.Screen
                   name="Login"
                   component={Login}
                   //options={{ headerShown: true }}
                 />
                 <Stack.Screen name="Dashboard" component={Dashboard} />
+                <Stack.Screen
+                  name="AdminDashboard"
+                  component={AdminDashboard}
+                  options={{ headerShown: true }}
+                />
                 <Stack.Screen name="MakePayment" component={MakePayment} />
                 <Stack.Screen name="CheckPayments" component={CheckPayment} />
                 <Stack.Screen name="LeagueStats" component={LeagueStats} />
@@ -70,8 +76,6 @@ export default function App() {
                   name="MonthlyLeagueStats"
                   component={MonthlyLeagueStats}
                 />
-
-                
               </Stack.Navigator>
             </NavigationContainer>
           </PaperProvider>
