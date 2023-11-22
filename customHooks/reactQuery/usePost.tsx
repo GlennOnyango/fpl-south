@@ -16,25 +16,33 @@ export const usePost = (url: string, token?: string) => {
     isLoading,
     isSuccess,
     isPaused,
-  } = useMutation((collectedData: any,) => {
+  } = useMutation(
+    async (collectedData: any) => {
+      //check if token is available
+      if (token?.length === 0) {
+        return axios.post(`${main_url}${url}`, collectedData, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          timeout: 30000,
+        }).catch((err) => {
+          console.log(err);
+        });
+      }
 
-    //check if token is available
-    if (token?.length === 0) {
       return axios.post(`${main_url}${url}`, collectedData, {
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-        timeout: 30000,
       });
+    },
+    {
+      onError: (err:any) => {
+        console.log(err.response.data);
+      },
     }
-
-    return axios.post(`${main_url}${url}`, collectedData, {
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-        },
-    });
-  });
+  );
 
   return {
     data,

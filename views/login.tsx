@@ -55,7 +55,7 @@ export default function Login({ navigation }: Props) {
   };
 
   const dis = useMemo(() => {
-    return credentials.password.length > 8 && credentials.email.length > 9
+    return credentials.password.length > 7 && credentials.email.length > 9
       ? false
       : true;
   }, [credentials]);
@@ -64,9 +64,7 @@ export default function Login({ navigation }: Props) {
     //check password and phone number if populated
 
     if (!dis) {
-      if (credentials.password.length > 0 && credentials.email.length > 0) {
-        mutate(credentials);
-      }
+      mutate(credentials);
     }
   };
 
@@ -78,18 +76,24 @@ export default function Login({ navigation }: Props) {
         const userData = data?.data.data;
         const token = data?.data.token;
 
-        const user = {
-          phone: userData.phone,
-          teamid: userData.teamid,
-          email: userData.email,
-          teamName: userData.teamName,
-          token: token,
-        };
-        authCTX.setUserDetails(user);
+        if (userData.approved) {
+          const user = {
+            phone: userData.phone,
+            teamid: userData.teamid,
+            email: userData.email,
+            teamName: userData.teamName,
+            approved: userData.approved,
+            admin: userData.admin,
+            token: token,
+          };
+          authCTX.setUserDetails(user);
+          //navigate to dashboard
 
-        //navigate to dashboard
-
-        navigation.navigate("Dashboard");
+          navigation.navigate("Dashboard");
+        } else {
+          authCTX.logout();
+          navigation.navigate("SignUpBoard");
+        }
       }
     }
   }, [data, isSuccess]);
@@ -162,7 +166,7 @@ export default function Login({ navigation }: Props) {
                 }}
                 variant="bodySmall"
               >
-                Login failed. Please try again.
+                {`${error?.response?.data?.error}` || "An error occured"}
               </Text>
             ) : null}
 

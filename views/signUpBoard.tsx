@@ -22,6 +22,7 @@ export default function SignUpBoard({ navigation }: Props) {
           style={{
             color: theme.colors.secondary,
             marginVertical: 16,
+            textAlign: "center",
           }}
           variant="titleLarge"
         >

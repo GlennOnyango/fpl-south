@@ -6,7 +6,7 @@ import {
   TextInput,
   useTheme,
 } from "react-native-paper";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { usePost } from "../customHooks/reactQuery/usePost";
 import SelectDropdown from "react-native-select-dropdown";
@@ -15,8 +15,8 @@ import { ScrollView } from "react-native-gesture-handler";
 type userCredntial = {
   phoneNumber: string;
   password: string;
-  teamID: string;
-  leagueID: string;
+  teamId: string;
+  leagueId: string;
   email: string;
   userType: string;
 };
@@ -30,11 +30,11 @@ export default function CreateAccount({ navigation }: Props) {
   const { error, mutate, isError, isLoading, isSuccess } =
     usePost("/auth/register");
   const [credentials, setCredentials] = useState<userCredntial>({
+    teamId: "",
+    leagueId: "",
     phoneNumber: "",
-    password: "",
-    teamID: "",
-    leagueID: "",
     email: "",
+    password: "",
     userType: "league participant",
   });
 
@@ -49,8 +49,8 @@ export default function CreateAccount({ navigation }: Props) {
       return credentials.password.length > 7 &&
         credentials.email.length > 9 &&
         credentials.phoneNumber.length > 9 &&
-        credentials.teamID.length > 0 &&
-        credentials.leagueID.length > 0
+        credentials.teamId.length > 0 &&
+        credentials.leagueId.length > 0
         ? false
         : true;
     }
@@ -59,13 +59,17 @@ export default function CreateAccount({ navigation }: Props) {
       return credentials.password.length > 7 &&
         credentials.email.length > 9 &&
         credentials.phoneNumber.length > 9 &&
-        credentials.teamID.length > 0
+        credentials.teamId.length > 0
         ? false
         : true;
     }
 
     return false;
   }, [credentials]);
+
+  useEffect(() => {
+    console.log(dis);
+  }, [dis]);
 
   if (isSuccess) {
     navigation.navigate("SignUpBoard");
@@ -169,9 +173,9 @@ export default function CreateAccount({ navigation }: Props) {
               label="Team id"
               mode="outlined"
               onChangeText={(newText) =>
-                updateCredentials({ type: "teamID", text: newText })
+                updateCredentials({ type: "teamId", text: newText })
               }
-              value={credentials.teamID}
+              value={credentials.teamId}
               inputMode={"text"}
             />
           </View>
@@ -185,9 +189,9 @@ export default function CreateAccount({ navigation }: Props) {
                   label="League id"
                   mode="outlined"
                   onChangeText={(newText) =>
-                    updateCredentials({ type: "leagueID", text: newText })
+                    updateCredentials({ type: "leagueId", text: newText })
                   }
-                  value={credentials.leagueID}
+                  value={credentials.leagueId}
                   inputMode={"text"}
                 />
               </View>
@@ -223,13 +227,21 @@ export default function CreateAccount({ navigation }: Props) {
               }}
             >
               {isError ? (
-                <Text variant="labelLarge">
-                  An error occured during registration{" "}
+                <Text
+                  variant="labelLarge"
+                  style={{ textAlign: "center", marginVertical: 10 }}
+                >
+                  {`${error?.response?.data?.error}` || "An error occured"}
                 </Text>
               ) : null}
 
               <Button
                 mode="outlined"
+                onPress={() => {
+                  if (!dis) {
+                    mutate(credentials);
+                  }
+                }}
                 buttonColor={dis ? "#cccccc" : theme.colors.secondary}
                 textColor="#fff"
                 style={{
@@ -238,11 +250,7 @@ export default function CreateAccount({ navigation }: Props) {
                   justifyContent: "center",
                   borderColor: dis ? "#cccccc" : theme.colors.secondary,
                 }}
-                onPress={() => {
-                  if (!dis) {
-                    mutate(credentials);
-                  }
-                }}
+                disabled={isLoading}
               >
                 {isLoading ? (
                   <ActivityIndicator
