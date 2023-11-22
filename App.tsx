@@ -17,6 +17,7 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import CheckPayment from "./views/payments/checkPayments";
 import LeagueStats from "./views/statistics/leagueStats";
 import MonthlyLeagueStats from "./views/statistics/monthlyStats";
+import SignUpBoard from "./views/signUpBoard";
 
 const Stack = createStackNavigator();
 
@@ -55,6 +56,7 @@ export default function App() {
                 }}
               >
                 <Stack.Screen name="CreateAccount" component={CreateAccount} />
+                <Stack.Screen name="SignUpBoard" component={SignUpBoard}/>
                 <Stack.Screen
                   name="Login"
                   component={Login}
@@ -68,6 +70,8 @@ export default function App() {
                   name="MonthlyLeagueStats"
                   component={MonthlyLeagueStats}
                 />
+
+                
               </Stack.Navigator>
             </NavigationContainer>
           </PaperProvider>

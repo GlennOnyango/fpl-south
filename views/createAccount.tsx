@@ -1,5 +1,11 @@
 import { KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
-import { Button, Text, TextInput, useTheme } from "react-native-paper";
+import {
+  ActivityIndicator,
+  Button,
+  Text,
+  TextInput,
+  useTheme,
+} from "react-native-paper";
 import { useMemo, useState } from "react";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { usePost } from "../customHooks/reactQuery/usePost";
@@ -21,7 +27,7 @@ type Props = {
 
 export default function CreateAccount({ navigation }: Props) {
   const theme = useTheme();
-  const { data, error, reset, mutate, isLoading, isSuccess } =
+  const { error, mutate, isError, isLoading, isSuccess } =
     usePost("/auth/register");
   const [credentials, setCredentials] = useState<userCredntial>({
     phoneNumber: "",
@@ -62,7 +68,7 @@ export default function CreateAccount({ navigation }: Props) {
   }, [credentials]);
 
   if (isSuccess) {
-    navigation.navigate("Login");
+    navigation.navigate("SignUpBoard");
   }
 
   return (
@@ -72,11 +78,7 @@ export default function CreateAccount({ navigation }: Props) {
       >
         <View style={style.container}>
           <View style={{ alignItems: "center", justifyContent: "center" }}>
-            <MaterialIcons
-              name="app-registration"
-              size={102}
-              color={"grey"}
-            />
+            <MaterialIcons name="app-registration" size={102} color={"grey"} />
 
             <Text
               style={{
@@ -220,6 +222,12 @@ export default function CreateAccount({ navigation }: Props) {
                 flexDirection: "column",
               }}
             >
+              {isError ? (
+                <Text variant="labelLarge">
+                  An error occured during registration{" "}
+                </Text>
+              ) : null}
+
               <Button
                 mode="outlined"
                 buttonColor={dis ? "#cccccc" : theme.colors.secondary}
@@ -236,7 +244,14 @@ export default function CreateAccount({ navigation }: Props) {
                   }
                 }}
               >
-                Register
+                {isLoading ? (
+                  <ActivityIndicator
+                    animating={true}
+                    color={theme.colors.secondary}
+                  />
+                ) : (
+                  "Register"
+                )}{" "}
               </Button>
 
               <Text style={{ textAlign: "center", marginVertical: 16 }}>
