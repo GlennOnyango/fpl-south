@@ -20,7 +20,7 @@ export default function SignUpBoard({ navigation }: Props) {
 
         <Text
           style={{
-            color: theme.colors.secondary,
+            color: "black",
             marginVertical: 16,
             textAlign: "center",
           }}

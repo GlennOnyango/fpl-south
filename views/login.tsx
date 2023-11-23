@@ -122,7 +122,7 @@ export default function Login({ navigation }: Props) {
 
           <Text
             style={{
-              color: theme.colors.secondary,
+              color: "black",
               marginVertical: 16,
             }}
             variant="titleLarge"

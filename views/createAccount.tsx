@@ -86,7 +86,7 @@ export default function CreateAccount({ navigation }: Props) {
 
             <Text
               style={{
-                color: theme.colors.secondary,
+                color: "black",
                 marginVertical: 16,
               }}
               variant="titleLarge"
