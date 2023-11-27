@@ -109,9 +109,6 @@ export default function AdminDashboard({ navigation }: Props) {
                   <Text>Make payment</Text>
                   <MaterialIcons name="payment" size={24} color="black" />
                 </View>
-                <Text style={{ position: "absolute", bottom: 10, left: 10 }}>
-                  100
-                </Text>
               </Surface>
             </TouchableHighlight>
 

@@ -1,9 +1,22 @@
-import { StyleSheet, StatusBar, ScrollView, View } from "react-native";
+import {
+  StyleSheet,
+  StatusBar,
+  ScrollView,
+  View,
+  Dimensions,
+} from "react-native";
 
-import { ActivityIndicator, List, Text, useTheme } from "react-native-paper";
+import {
+  ActivityIndicator,
+  Appbar,
+  List,
+  Text,
+  useTheme,
+} from "react-native-paper";
 import { useFetch } from "../../customHooks/reactQuery/useFetch";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import AuthContext from "../../context/authcontext";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type Props = {
   navigation: any;
@@ -23,7 +36,11 @@ interface League extends ItemPropsCost {
   index: number;
 }
 
+const { width, height } = Dimensions.get("window");
+const BOTTOM_APPBAR_HEIGHT = 60;
+
 export default function MonthlyLeagueStats({ navigation }: Props) {
+  const { bottom } = useSafeAreaInsets();
   const authCTX = useContext(AuthContext);
   const theme = useTheme();
   const { data, isError, isFetching, isLoading } = useFetch(
@@ -32,10 +49,17 @@ export default function MonthlyLeagueStats({ navigation }: Props) {
     authCTX.userDetails.token
   );
 
+  useEffect(() => {
+    navigation.setOptions({
+      title: "Monthly statistics",
+    });
+  }, []);
+
   const Item = ({
     event_total,
     player_name,
     entry,
+    cost,
     entry_name,
     index,
   }: League) => (
@@ -62,17 +86,20 @@ export default function MonthlyLeagueStats({ navigation }: Props) {
       }}
     >
       <List.Item
-        title={event_total}
-        left={(props) => (
-          <List.Icon {...props} icon="currency-gbp" color="black" />
-        )}
+        title={`Total monthly points: ${event_total}`}
         style={{
           paddingHorizontal: 20,
         }}
       />
       <List.Item
-        title={player_name}
-        left={(props) => <List.Icon {...props} icon="database" color="black" />}
+        title={`Player name : ${player_name}`}
+        style={{
+          paddingHorizontal: 20,
+        }}
+      />
+
+      <List.Item
+        title={`Points deduction : ${cost}`}
         style={{
           paddingHorizontal: 20,
         }}
@@ -103,29 +130,97 @@ export default function MonthlyLeagueStats({ navigation }: Props) {
   }
 
   return (
-    <List.Section title={`Game Weeks `} style={{ paddingBottom: 30 }}>
-      <ScrollView>
-        {data.data.map((e: ItemPropsCost, index: number) => {
-          const eprime = { ...e, index: index };
-          return <Item key={e.entry} {...eprime} />;
-        })}
-      </ScrollView>
-    </List.Section>
+    <>
+      <List.Section
+        title={`Game Weeks ${data.event}`}
+        style={{ paddingBottom: 30 }}
+      >
+        <ScrollView>
+          {data.data.map((e: ItemPropsCost, index: number) => {
+            const eprime = { ...e, index: index };
+            return <Item key={e.entry} {...eprime} />;
+          })}
+        </ScrollView>
+      </List.Section>
+
+      <Appbar
+        style={[
+          style.bottom,
+          {
+            height: BOTTOM_APPBAR_HEIGHT + bottom,
+            backgroundColor: theme.colors.elevation.level2,
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-evenly",
+          },
+        ]}
+        safeAreaInsets={{ bottom }}
+      >
+        <Appbar.Action
+          icon="home"
+          onPress={() => navigation.navigate("AdminDashboard")}
+        />
+        <Appbar.Action icon="email" onPress={() => {}} />
+        <Appbar.Action icon="bell" onPress={() => {}} />
+      </Appbar>
+    </>
   );
 }
 
-const styles = StyleSheet.create({
+const style = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: StatusBar.currentHeight || 0,
   },
-  item: {
-    backgroundColor: "#f9c2ff",
-    padding: 2,
-    marginVertical: 2,
-    marginHorizontal: 2,
+  surfaceHouse: {
+    display: "flex",
+    height: height * 0.17,
+    flexDirection: "row",
+    marginTop: 4,
+    marginHorizontal: 4,
   },
-  title: {
-    fontSize: 24,
+  touchSurface: {
+    flex: 1,
+    height: height * 0.15,
+    width: width * 0.4,
+    borderRadius: 4,
+    margin: 4,
+  },
+  surfaceCard: {
+    backgroundColor: "white",
+    padding: 8,
+    flex: 1,
+    height: height * 0.15,
+    borderRadius: 4,
+  },
+  surfaceView: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  cardHouse: {
+    display: "flex",
+    height: height * 0.1,
+    flexDirection: "row",
+    marginTop: 4,
+    marginHorizontal: 4,
+  },
+  card: {
+    width: "100%",
+    backgroundColor: "#fff",
+  },
+  cardContent: {
+    flex: 1,
+    justifyContent: "center",
+  },
+  fab: {
+    position: "absolute",
+    right: 16,
+  },
+  bottom: {
+    backgroundColor: "aquamarine",
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 0,
   },
 });

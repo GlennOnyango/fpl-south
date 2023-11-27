@@ -69,7 +69,11 @@ export default function App() {
                   component={AdminDashboard}
                   options={{ headerShown: true }}
                 />
-                <Stack.Screen name="MakePayment" component={MakePayment} />
+                <Stack.Screen
+                  name="MakePayment"
+                  component={MakePayment}
+                  options={{ headerShown: true }}
+                />
                 <Stack.Screen name="CheckPayments" component={CheckPayment} />
                 <Stack.Screen
                   name="LeagueStats"
@@ -79,6 +83,7 @@ export default function App() {
                 <Stack.Screen
                   name="MonthlyLeagueStats"
                   component={MonthlyLeagueStats}
+                  options={{ headerShown: true }}
                 />
               </Stack.Navigator>
             </NavigationContainer>

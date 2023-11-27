@@ -12,13 +12,17 @@ export default function MakePayment({ navigation }: Props) {
   const payCtx = useContext(PaymentContext);
 
   useEffect(() => {
-    console.log(payCtx.paymentDetails);
-  }, [payCtx.paymentDetails]);
+    navigation.setOptions({
+      title: "Make payment",
+    });
+  }, []);
 
-  return <>
-  {payCtx.steps === 1 && <Step1 navigation={navigation} />}
-  {payCtx.steps === 2 && <Step2 navigation={navigation} />}
-  </>;
+  return (
+    <>
+      {payCtx.steps === 1 && <Step1 navigation={navigation} />}
+      {payCtx.steps === 2 && <Step2 navigation={navigation} />}
+    </>
+  );
 }
 
 const style = StyleSheet.create({
