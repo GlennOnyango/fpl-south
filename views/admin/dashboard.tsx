@@ -13,7 +13,7 @@ import { useContext, useEffect } from "react";
 import AuthContext from "../../context/authcontext";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { FontAwesome5 } from "@expo/vector-icons";
+import { FontAwesome5, Ionicons, MaterialIcons, Entypo } from "@expo/vector-icons";
 import { ScrollView } from "react-native-gesture-handler";
 type Props = {
   navigation: any;
@@ -71,7 +71,7 @@ export default function AdminDashboard({ navigation }: Props) {
               <Surface style={style.surfaceCard} elevation={5} mode="elevated">
                 <View style={style.surfaceView} accessibilityRole="button">
                   <Text>Monthly league</Text>
-                  <FontAwesome5 name="user" size={24} color="black" />
+                  <Ionicons name="stats-chart" size={24} color="black" />
                 </View>
                 <Text style={{ position: "absolute", bottom: 10, left: 10 }}>
                   100
@@ -88,7 +88,7 @@ export default function AdminDashboard({ navigation }: Props) {
               <Surface style={style.surfaceCard} elevation={5}>
                 <View style={style.surfaceView}>
                   <Text>Weekly league</Text>
-                  <FontAwesome5 name="user" size={24} color="black" />
+                  <Ionicons name="stats-chart-sharp" size={24} color="black" />
                 </View>
                 <Text style={{ position: "absolute", bottom: 10, left: 10 }}>
                   100
@@ -107,7 +107,7 @@ export default function AdminDashboard({ navigation }: Props) {
               <Surface style={style.surfaceCard} elevation={5} mode="elevated">
                 <View style={style.surfaceView} accessibilityRole="button">
                   <Text>Make payment</Text>
-                  <FontAwesome5 name="user" size={24} color="black" />
+                  <MaterialIcons name="payment" size={24} color="black" />
                 </View>
                 <Text style={{ position: "absolute", bottom: 10, left: 10 }}>
                   100
@@ -124,7 +124,7 @@ export default function AdminDashboard({ navigation }: Props) {
               <Surface style={style.surfaceCard} elevation={5}>
                 <View style={style.surfaceView}>
                   <Text>Check payments</Text>
-                  <FontAwesome5 name="user" size={24} color="black" />
+                  <MaterialIcons name="payments" size={24} color="black" />
                 </View>
                 <Text style={{ position: "absolute", bottom: 10, left: 10 }}>
                   0
@@ -143,7 +143,7 @@ export default function AdminDashboard({ navigation }: Props) {
               <Surface style={style.surfaceCard} elevation={5} mode="elevated">
                 <View style={style.surfaceView} accessibilityRole="button">
                   <Text>Set payment rate</Text>
-                  <FontAwesome5 name="user" size={24} color="black" />
+                  <MaterialIcons name="rate-review" size={24} color="black" />
                 </View>
                 <Text style={{ position: "absolute", bottom: 10, left: 10 }}>
                   2
@@ -162,7 +162,7 @@ export default function AdminDashboard({ navigation }: Props) {
               <Surface style={style.surfaceCard} elevation={5} mode="elevated">
                 <View style={style.surfaceView} accessibilityRole="button">
                   <Text>Manage users</Text>
-                  <FontAwesome5 name="user" size={24} color="black" />
+                  <FontAwesome5 name="users" size={24} color="black" />
                 </View>
                 <Text style={{ position: "absolute", bottom: 10, left: 10 }}>
                   2
@@ -179,7 +179,7 @@ export default function AdminDashboard({ navigation }: Props) {
               <Surface style={style.surfaceCard} elevation={5} mode="elevated">
                 <View style={style.surfaceView} accessibilityRole="button">
                   <Text>Manage admins</Text>
-                  <FontAwesome5 name="user" size={24} color="black" />
+                  <FontAwesome5 name="users-cog" size={24} color="black" />
                 </View>
                 <Text style={{ position: "absolute", bottom: 10, left: 10 }}>
                   2

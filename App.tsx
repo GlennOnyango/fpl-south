@@ -71,7 +71,11 @@ export default function App() {
                 />
                 <Stack.Screen name="MakePayment" component={MakePayment} />
                 <Stack.Screen name="CheckPayments" component={CheckPayment} />
-                <Stack.Screen name="LeagueStats" component={LeagueStats} />
+                <Stack.Screen
+                  name="LeagueStats"
+                  component={LeagueStats}
+                  options={{ headerShown: true }}
+                />
                 <Stack.Screen
                   name="MonthlyLeagueStats"
                   component={MonthlyLeagueStats}
